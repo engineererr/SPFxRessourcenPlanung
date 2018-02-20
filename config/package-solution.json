@@ -1,0 +1,13 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "weekly-resource-planning-client-side-solution",
+    "id": "45bd273b-cdee-4ddc-9232-4aad9c9c333e",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true
+  },
+  "paths": {
+    "zippedPackage": "solution/weekly-resource-planning.sppkg"
+  }
+}

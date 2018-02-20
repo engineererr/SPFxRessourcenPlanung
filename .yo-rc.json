@@ -1,0 +1,8 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.4.0",
+    "libraryName": "weekly-resource-planning",
+    "libraryId": "45bd273b-cdee-4ddc-9232-4aad9c9c333e",
+    "environment": "spo"
+  }
+}
