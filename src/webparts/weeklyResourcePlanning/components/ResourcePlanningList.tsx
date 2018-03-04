@@ -53,7 +53,7 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
     return (
       <div>
         <h3 className={styles.customH3}>{item.ProjektCode}</h3>
-        <ProgressIndicator percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={this._getFormattedProgressIndicatorLabel(item.IstMinuten, item.PlanMinuten)} />
+        <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1)?styles.overbookedProcessIndicator:""} percentComplete={1 / item.PlanMinuten * item.IstMinuten}  description={this._getFormattedProgressIndicatorLabel(item.IstMinuten, item.PlanMinuten)} />
       </div>
     );
   }

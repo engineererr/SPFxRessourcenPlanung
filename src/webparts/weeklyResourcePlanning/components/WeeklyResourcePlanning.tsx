@@ -3,7 +3,6 @@ import styles from './WeeklyResourcePlanning.module.scss';
 import { IWeeklyResourcePlanningProps } from './IWeeklyResourcePlanningProps';
 import { IWeeklyResourcePlanningState } from './IWeeklyResourcePlanningState';
 
-import { escape } from '@microsoft/sp-lodash-subset';
 import { ListManager } from '../utils/ListManager';
 import * as moment from 'moment';
 import { autobind, List, ProgressIndicator, Icon, IconButton } from 'office-ui-fabric-react';
@@ -13,14 +12,13 @@ import * as strings from 'WeeklyResourcePlanningWebPartStrings';
 
 export default class WeeklyResourcePlanning extends React.Component<IWeeklyResourcePlanningProps, IWeeklyResourcePlanningState> {
   readonly MOMENTFORMAT: string = "MM/DD/YYYY";
-
+  readonly TESTUSER: string = "kbo0382";
   testDate: string = moment("01/30/2018").format(this.MOMENTFORMAT);
   constructor(props: IWeeklyResourcePlanningProps, state: IWeeklyResourcePlanningState) {
     super(props);
     this.state = {
       items: [],
     };
-    this._getListdata();
   }
 
   public render(): React.ReactElement<IWeeklyResourcePlanningProps> {
@@ -34,7 +32,7 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
             <span><IconButton title={strings.NextWeekLabel} onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
           </div>
           <h1>{strings.TitleLabel} {moment(this.testDate).format("DD.MM.YYYY")}</h1>
-          <ResourcePlanningList items={this.state.items} getListData={this._getListdata} showAmountOfTimeInHours={this.props.showAmountOfTimeInHours}/>
+          <ResourcePlanningList items={this.state.items} getListData={this._getListdata} showAmountOfTimeInHours={this.props.showAmountOfTimeInHours} />
         </div>
       </div>
     );
@@ -46,22 +44,19 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
     }
   }
 
-
-
   @autobind
   private _getListdata() {
     let listManager: ListManager = new ListManager(this.props.context);
     listManager.getListDataForUser("kbo0382").then((response) => {
       this._renderList(response.value);
     });
-
   }
 
   @autobind
   private _renderList(items: ISPList[]): void {
     let newItems: Array<any> = [];
     items.forEach((item: ISPList) => {
-      if (item.Title == "kbo0382" && this._isDateCurrentMonday(moment(item.WochenDatum).format(this.MOMENTFORMAT))) {
+      if (item.Title == this.TESTUSER && this._isDateCurrentMonday(moment(item.WochenDatum).format(this.MOMENTFORMAT))) {
         newItems.push(item);
       }
     });
@@ -69,7 +64,6 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
     this.setState({ items: newItems });
   }
 
-  @autobind
   private _isDateCurrentMonday(wochenDatum: string): boolean {
     return wochenDatum == moment(this.testDate).startOf('isoWeek').format(this.MOMENTFORMAT);
   }
@@ -90,6 +84,4 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
     this._getNewTestDate(7);
     this._getListdata();
   }
-
-
 }

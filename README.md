@@ -30,3 +30,7 @@ gulp package-solution - TODO
 
 1. Install PNP PowerShell Module: 	Install-Module SharePointPnPPowerShellOnline
 2. 
+
+### Improvements
+
+1. Detect current week and say "Current Week" in title
