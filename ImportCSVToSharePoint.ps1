@@ -1,3 +1,10 @@
+#Install-Module AzureAD not necessary. we will get information from local AD
+#$admin = Connect-PnPOnline -Url "https://cloudfighters-admin.sharepoint.com"
+#Get-PnPUserProfileProperty -Account <String[]>
+#                           [-Connection <SPOnlineConnection>]
+
+#install ad module from here: https://www.microsoft.com/en-us/download/details.aspx?id=45520
+Get-ADUser blalblal
 Connect-PnPOnline -Url "https://cloudfighters.sharepoint.com/sites/pizzameeting"
 cd d:
 Remove-PnPList "RessourcenPlanDaten"

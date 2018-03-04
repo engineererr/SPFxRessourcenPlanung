@@ -20,6 +20,7 @@
     "@types/react-dom": "15.5.6",
     "@types/webpack-env": ">=1.12.1 <1.14.0",
     "csv-parse": "^2.0.0",
+    "moment": "^2.20.1",
     "react": "15.6.2",
     "react-dom": "15.6.2"
   },
@@ -30,6 +31,12 @@
     "@types/chai": ">=3.4.34 <3.6.0",
     "@types/mocha": ">=2.2.33 <2.6.0",
     "ajv": "~5.2.2",
-    "gulp": "~3.9.1"
+    "gulp": "~3.9.1",
+    "@types/sinon": "1.16.36",
+    "sinon": "1.17.2",
+    "@types/enzyme": "2.8.11",
+    "chai-enzyme": "0.8.0",
+    "enzyme": "2.8.0",
+    "react-addons-test-utils": "15.4.2"
   }
 }

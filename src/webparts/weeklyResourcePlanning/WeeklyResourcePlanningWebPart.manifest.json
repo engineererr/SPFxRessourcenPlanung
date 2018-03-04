@@ -15,12 +15,19 @@
 
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
-    "group": { "default": "Other" },
-    "title": { "default": "WeeklyResourcePlanning" },
-    "description": { "default": "Shows a weekly summary over the planned projects in the Ressourcenplanung" },
+    "group": {
+      "default": "Other"
+    },
+    "title": {
+      "default": "WeeklyResourcePlanning"
+    },
+    "description": {
+      "default": "Shows a weekly summary over the planned projects in the Ressourcenplanung"
+    },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "WeeklyResourcePlanning"
+      "description": "WeeklyResourcePlanning",
+      "showAmountOfTimeInHours": true
     }
   }]
 }

@@ -4,7 +4,8 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneToggle,
 } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'WeeklyResourcePlanningWebPartStrings';
@@ -12,7 +13,7 @@ import WeeklyResourcePlanning from './components/WeeklyResourcePlanning';
 import { IWeeklyResourcePlanningProps } from './components/IWeeklyResourcePlanningProps';
 
 export interface IWeeklyResourcePlanningWebPartProps {
-  description: string;
+  showAmountOfTimeInHours: boolean;
 }
 
 export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart<IWeeklyResourcePlanningWebPartProps> {
@@ -21,8 +22,8 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
     const element: React.ReactElement<IWeeklyResourcePlanningProps> = React.createElement(
       WeeklyResourcePlanning,
       {
-        description: this.properties.description,
-        context: this.context
+        context: this.context,
+        showAmountOfTimeInHours: this.properties.showAmountOfTimeInHours,
       }
     );
 
@@ -44,9 +45,9 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                })
+                PropertyPaneToggle('showAmountOfTimeInHours', {
+                  label: strings.showAmountOfTimeInHoursFieldLabel
+                }),
               ]
             }
           ]
