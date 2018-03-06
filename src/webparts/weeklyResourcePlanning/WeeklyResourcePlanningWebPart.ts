@@ -5,15 +5,18 @@ import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
   PropertyPaneTextField,
+  PropertyPaneDropdown,
   PropertyPaneToggle,
 } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'WeeklyResourcePlanningWebPartStrings';
 import WeeklyResourcePlanning from './components/WeeklyResourcePlanning';
 import { IWeeklyResourcePlanningProps } from './components/IWeeklyResourcePlanningProps';
+import { ListDataProvider } from './providers/ResourcenPlanDatenList/ListDataProvider';
+
 
 export interface IWeeklyResourcePlanningWebPartProps {
-  showAmountOfTimeInHours: boolean;
+  selectedUnitToDisplayTime: string;
 }
 
 export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart<IWeeklyResourcePlanningWebPartProps> {
@@ -22,8 +25,8 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
     const element: React.ReactElement<IWeeklyResourcePlanningProps> = React.createElement(
       WeeklyResourcePlanning,
       {
-        context: this.context,
-        showAmountOfTimeInHours: this.properties.showAmountOfTimeInHours,
+        selectedUnitToDisplayTime: this.properties.selectedUnitToDisplayTime,
+        listDataProvider: new ListDataProvider(this.context),
       }
     );
 
@@ -38,15 +41,17 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
     return {
       pages: [
         {
-          header: {
-            description: strings.PropertyPaneDescription
-          },
           groups: [
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneToggle('showAmountOfTimeInHours', {
-                  label: strings.showAmountOfTimeInHoursFieldLabel
+                PropertyPaneDropdown('selectedUnitToDisplayTime', {
+                  label: strings.selectedUnitToDisplayTimeFieldLabel,
+                  options: [
+                    { key: 'minutes', text: strings.showAmountOfTimeInMinutesChoiceLabel },
+                    { key: 'hours', text: strings.showAmountOfTimeInHoursChoiceLabel },
+                    { key: 'days', text: strings.showAmountOfTimeInDaysChoiceLabel },
+                  ]
                 }),
               ]
             }

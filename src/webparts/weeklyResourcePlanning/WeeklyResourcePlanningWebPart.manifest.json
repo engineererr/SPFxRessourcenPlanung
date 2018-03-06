@@ -26,8 +26,8 @@
     },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "WeeklyResourcePlanning",
-      "showAmountOfTimeInHours": true
+      "description": "Weekly Resource Planning",
+      "selectedUnitToDisplayTime": "hours"
     }
   }]
 }

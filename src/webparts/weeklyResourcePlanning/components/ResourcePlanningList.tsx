@@ -5,16 +5,18 @@ import * as moment from 'moment';
 import { IWeeklyResourcePlanningProps } from './IWeeklyResourcePlanningProps';
 import { IWeeklyResourcePlanningState } from './IWeeklyResourcePlanningState';
 import { ListManager } from '../utils/ListManager';
-import { ISPList } from './ISPLists';
 
-import { autobind, List, ProgressIndicator, Icon, IconButton } from 'office-ui-fabric-react';
+import { autobind, List, ProgressIndicator, Icon, IconButton, Link } from 'office-ui-fabric-react';
 
 import * as strings from 'WeeklyResourcePlanningWebPartStrings';
+import IListEntry from '../providers/ResourcenPlanDatenList/IListEntry';
 
 export interface IResourcePlanningListProps {
-  items: Array<ISPList>;
+  items: Array<IListEntry>;
   getListData: any;
-  showAmountOfTimeInHours: boolean;
+
+  getProjectDataForThisWeek: any;
+  selectedUnitToDisplayTime: string;
 
 }
 
@@ -22,7 +24,7 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
 
   readonly MOMENTFORMAT: string = "MM/DD/YYYY";
 
-  testDate: string = moment("01/30/2018").format(this.MOMENTFORMAT);
+  testDate: string = moment("01/29/2018").format(this.MOMENTFORMAT);
   constructor(props: any, state: IWeeklyResourcePlanningState) {
     super(props);
     this.state = {
@@ -43,29 +45,47 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
   }
 
   componentWillReceiveProps(nextProps: IResourcePlanningListProps) {
-    if (this.props.showAmountOfTimeInHours !== nextProps.showAmountOfTimeInHours) {
+    if (this.props.selectedUnitToDisplayTime !== nextProps.selectedUnitToDisplayTime) {
       this.props.getListData();
     }
   }
 
   @autobind
-  private _onRenderCell(item: ISPList, index: number | undefined): JSX.Element {
+  private _onRenderCell(item: IListEntry, index: number | undefined): JSX.Element {
     return (
       <div>
         <h3 className={styles.customH3}>{item.ProjektCode}</h3>
-        <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1)?styles.overbookedProcessIndicator:""} percentComplete={1 / item.PlanMinuten * item.IstMinuten}  description={this._getFormattedProgressIndicatorLabel(item.IstMinuten, item.PlanMinuten)} />
+        <span>
+          {item.ProjectSpaceRelativeUrl !== null && item.ProjectSpaceRelativeUrl !== undefined ?
+            (<Link className={styles.titleLinks} target="_blank" href={item.ProjectSpaceRelativeUrl.Url}>{item.ProjectSpaceRelativeUrl.Description}</Link>
+            ) : ("")
+          }
+          {item.JiraAbsoluteUrl !== null && item.JiraAbsoluteUrl !== undefined ?
+            (<Link className={styles.titleLinks} target="_blank" href={item.JiraAbsoluteUrl.Url}>{item.JiraAbsoluteUrl.Description}</Link>
+            ) : ("")
+          }
+          <Link onClick={() => this.props.getProjectDataForThisWeek(item.ProjektCode, item.WochenDatum)}>more...</Link>
+        </span>
+        <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1) ? styles.overbookedProcessIndicator : ""} percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={this._getFormattedProgressIndicatorLabel(item.IstMinuten, item.PlanMinuten)} />
       </div>
     );
   }
 
+
   @autobind
   private _getFormattedProgressIndicatorLabel(istMinuten: number, planMinuten: number): string {
-    if (this.props.showAmountOfTimeInHours) {
-      let istMinutenInHours = istMinuten / 60;
-      let planMinutenInHours = planMinuten / 60;
-      return strings.ProgressIndicatorLabelInHours.replace("{ISTMINUTEN}", istMinutenInHours.toString()).replace("{PLANMINUTEN}", planMinutenInHours.toString())
-    } else {
-      return strings.ProgressIndicatorLabel.replace("{ISTMINUTEN}", istMinuten.toString()).replace("{PLANMINUTEN}", planMinuten.toString())
+    switch (this.props.selectedUnitToDisplayTime) {
+      case "days":
+        let istMinutenInDays = Math.round(istMinuten / 60 / 8 * 100) / 100;
+        let planMinutenInDays = Math.round(planMinuten / 60 / 8 * 100) / 100;
+        return strings.ProgressIndicatorLabelInDays.replace("{ISTMINUTEN}", istMinutenInDays.toString()).replace("{PLANMINUTEN}", planMinutenInDays.toString())
+      case "hours":
+        let istMinutenInHours = Math.round(istMinuten / 60 * 100) / 100;
+        let planMinutenInHours = Math.round(planMinuten / 60 * 100) / 100;
+        return strings.ProgressIndicatorLabelInHours.replace("{ISTMINUTEN}", istMinutenInHours.toString()).replace("{PLANMINUTEN}", planMinutenInHours.toString())
+      default:
+        return strings.ProgressIndicatorLabel.replace("{ISTMINUTEN}", istMinuten.toString()).replace("{PLANMINUTEN}", planMinuten.toString())
     }
+
   }
 }

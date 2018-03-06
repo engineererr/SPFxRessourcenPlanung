@@ -4,16 +4,21 @@
 #                           [-Connection <SPOnlineConnection>]
 
 #install ad module from here: https://www.microsoft.com/en-us/download/details.aspx?id=45520
-Get-ADUser blalblal
+#Get-ADUser blalblal
 Connect-PnPOnline -Url "https://cloudfighters.sharepoint.com/sites/pizzameeting"
-cd d:
-Remove-PnPList "RessourcenPlanDaten"
+cd D:\AVexcluded\WeeklyResourcePlanning
+Remove-PnPList "RessourcenPlanDaten" -Force
 New-PnPList -Title "RessourcenPlanDaten" -Template GenericList
-$l = Get-PnPList -Identity "RessourcenPlanDaten"
 
-Add-PnPField -List $l -DisplayName "ProjektCode" -InternalName "ProjektCode" -Type Text -AddToDefaultView
-Add-PnPField -List $l -DisplayName "PlanMinuten" -InternalName "PlanMinuten" -Type Number -AddToDefaultView
-Add-PnPField -List $l -DisplayName "IstMinuten" -InternalName "IstMinuten" -Type Number -AddToDefaultView
+$RessourcenPlanDatenList = Get-PnPList -Identity "RessourcenPlanDaten"
+$projectInformationListItems = Get-PnPListItem -List "ProjectInformation" -Fields "Title", "ProjectSpaceRelativeUrl", "JiraAbsoluteUrl"
+
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjektCode" -InternalName "ProjektCode" -Type Text -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "PlanMinuten" -InternalName "PlanMinuten" -Type Number -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "IstMinuten" -InternalName "IstMinuten" -Type Number -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjectSpaceRelativeUrl" -InternalName "ProjectSpaceRelativeUrl" -Type URL -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "JiraAbsoluteUrl" -InternalName "JiraAbsoluteUrl" -Type URL -AddToDefaultView
+
 Add-PnPFieldFromXml '<Field Type="DateTime"
 				DisplayName="WochenDatum"
 				Required="FALSE"
@@ -25,20 +30,22 @@ Add-PnPFieldFromXml '<Field Type="DateTime"
 				SourceID="{6cf53ae4-314b-435e-9685-19b7f7b8df07}"
 				StaticName="WochenDatum"
 				Name="WochenDatum">
-		</Field>' -List $l -AddToDefaultView
+		</Field>' -List $RessourcenPlanDatenList
 $import = Import-Csv -Delimiter "," -Path "RessourcenPlanDaten.csv"
 
 $import | % {
-
-    #Loginname, ProjektCode, PlanMinuten, IstMinuten, WochenDatum
+    $projektCode = $_.ProjektCode
+    $projectInformationListItem = $projectInformationListItems | ? {$_.FieldValues.Title -eq $projektCode}
     $values = @{
-        "Title"       = $_.LoginName;
-        "ProjektCode" = $_.ProjektCode;
-        "PlanMinuten" = $_.PlanMinuten;
-        "IstMinuten"  = $_.IstMinuten;
-        "WochenDatum" = $_.WochenDatum.Substring(0, $_.WochenDatum.IndexOf(" "));
-    }
-    Add-PnPListItem -List $l -Values $values -ContentType Item
-}
+        "Title"                   = $_.LoginName;
+        "ProjektCode"             = $_.ProjektCode;
+        "PlanMinuten"             = $_.PlanMinuten;
+        "IstMinuten"              = $_.IstMinuten;
+        "WochenDatum"             = $_.WochenDatum.Substring(0, $_.WochenDatum.IndexOf(" ")) + " 12:00";
+        "ProjectSpaceRelativeUrl" = $projectInformationListItem.FieldValues.ProjectSpaceRelativeUrl.Url + ", " + $projectInformationListItem.FieldValues.ProjectSpaceRelativeUrl.Description;
+        "JiraAbsoluteUrl"         = $projectInformationListItem.FieldValues.JiraAbsoluteUrl.Url + ", " + $projectInformationListItem.FieldValues.JiraAbsoluteUrl.Description;
 
-#file https://cloudfighters.sharepoint.com/sites/PizzaMeeting/WeeklyResourcePlanningData/RessourcenPlanDaten.csv
+    }
+    Add-PnPListItem -List $RessourcenPlanDatenList -Values $values -ContentType Item
+
+}

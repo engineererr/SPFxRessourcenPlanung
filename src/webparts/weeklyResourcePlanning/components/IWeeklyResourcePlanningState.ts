@@ -1,6 +1,7 @@
-import { ISPList } from "./ISPLists";
+import IListEntry from "../providers/ResourcenPlanDatenList/IListEntry";
 
 export interface IWeeklyResourcePlanningState {
-  items: Array<ISPList>;
-
+  items: Array<IListEntry>;
+  showProjectDetails: boolean;
+  projectDetails: Array<IListEntry>;
 }

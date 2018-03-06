@@ -1,15 +1,20 @@
 declare interface IWeeklyResourcePlanningWebPartStrings {
-  PropertyPaneDescription: string;
+  //Property Pane
   BasicGroupName: string;
-  DescriptionFieldLabel: string;
+  selectedUnitToDisplayTimeFieldLabel: string;
+  showAmountOfTimeInMinutesChoiceLabel: string;
+  showAmountOfTimeInHoursChoiceLabel: string;
+  showAmountOfTimeInDaysChoiceLabel: string;
+
+  //General
   TitleLabel: string;
   ProgressIndicatorLabel: string;
   ProgressIndicatorLabelInHours: string;
-
+  ProgressIndicatorLabelInDays: string;
   PreviousWeekLabel: string;
   NextWeekLabel: string;
   NoDataForThisWeek: string;
-  showAmountOfTimeInHoursFieldLabel: string;
+
 
 }
 

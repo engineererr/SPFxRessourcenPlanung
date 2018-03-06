@@ -1,4 +1,7 @@
+import IListDataProvider from "../providers/ResourcenPlanDatenList/IListDataProvider";
+
+
 export interface IWeeklyResourcePlanningProps {
-  context: any;
-  showAmountOfTimeInHours: boolean;
+  selectedUnitToDisplayTime: string;
+  listDataProvider: IListDataProvider;
 }

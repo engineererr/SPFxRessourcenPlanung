@@ -5,7 +5,9 @@ import {
   ISPHttpClientOptions
 } from '@microsoft/sp-http';
 
-import { ISPList, ISPLists } from "../components/ISPLists";
+
+import { ISPResponse } from "../providers/ResourcenPlanDatenList/ISPResponse";
+import IListEntry from "../providers/ResourcenPlanDatenList/IListEntry";
 
 export class ListManager {
   context: any;
@@ -14,15 +16,22 @@ export class ListManager {
     this.context = context;
   }
 
-  public getListData(): Promise<ISPLists> {
+  public getListData(): Promise<ISPResponse> {
     return this.context.spHttpClient.fetch('https://cloudfighters.sharepoint.com/sites/PizzaMeeting' + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
   }
 
-  public getListDataForUser(user: string): Promise<ISPLists> {
+  public getListDataForUser(user: string): Promise<ISPResponse> {
     return this.context.spHttpClient.fetch('https://cloudfighters.sharepoint.com/sites/PizzaMeeting' + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$filter=Title eq '${user}'`, SPHttpClient.configurations.v1)
+      .then((response: SPHttpClientResponse) => {
+        return response.json();
+      });
+  }
+
+  public getListDataForProjectAndThisWeek(projectCode: string, week: Date): Promise<ISPResponse> {
+    return this.context.spHttpClient.fetch(`https://cloudfighters.sharepoint.com/sites/PizzaMeeting/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$filter=(WochenDatum eq '${week.toString()}' and ProjektCode eq '${projectCode}')`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });

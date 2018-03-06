@@ -5,19 +5,21 @@ import { IWeeklyResourcePlanningState } from './IWeeklyResourcePlanningState';
 
 import { ListManager } from '../utils/ListManager';
 import * as moment from 'moment';
-import { autobind, List, ProgressIndicator, Icon, IconButton } from 'office-ui-fabric-react';
-import { ISPList } from './ISPLists';
+import { autobind, List, ProgressIndicator, Icon, IconButton, Panel, PanelType } from 'office-ui-fabric-react';
 import ResourcePlanningList from './ResourcePlanningList';
 import * as strings from 'WeeklyResourcePlanningWebPartStrings';
+import IListEntry from '../providers/ResourcenPlanDatenList/IListEntry';
 
 export default class WeeklyResourcePlanning extends React.Component<IWeeklyResourcePlanningProps, IWeeklyResourcePlanningState> {
   readonly MOMENTFORMAT: string = "MM/DD/YYYY";
-  readonly TESTUSER: string = "kbo0382";
-  testDate: string = moment("01/30/2018").format(this.MOMENTFORMAT);
+  readonly TESTUSER: string = "cis0344";
+  testDate: string = moment("01/22/2018").format(this.MOMENTFORMAT);
   constructor(props: IWeeklyResourcePlanningProps, state: IWeeklyResourcePlanningState) {
     super(props);
     this.state = {
       items: [],
+      showProjectDetails: false,
+      projectDetails: [],
     };
   }
 
@@ -25,37 +27,89 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
     return (
       <div className={styles.weeklyResourcePlanning}>
         <div className={styles.container}>
-          <div className={styles.previousWeekArrow}>
-            <span><IconButton title={strings.PreviousWeekLabel} onClick={this._onClickPreviousWeek} iconProps={{ iconName: 'ChromeBack' }} /></span>
+          <div className={styles.header}>
+            <div className={styles.previousWeekArrow}>
+              <span><IconButton title={strings.PreviousWeekLabel} onClick={this._onClickPreviousWeek} iconProps={{ iconName: 'ChromeBack' }} /></span>
+            </div>
+            <div className={styles.nextWeekArrow}>
+              <span><IconButton title={strings.NextWeekLabel} onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
+            </div>
           </div>
-          <div className={styles.nextWeekArrow}>
-            <span><IconButton title={strings.NextWeekLabel} onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
-          </div>
-          <h1>{strings.TitleLabel} {moment(this.testDate).format("DD.MM.YYYY")}</h1>
-          <ResourcePlanningList items={this.state.items} getListData={this._getListdata} showAmountOfTimeInHours={this.props.showAmountOfTimeInHours} />
+          <h1 className={styles.customH1}>{this._getSimpleWeekFormat(this.testDate)}</h1>
+          <span>{strings.TitleLabel} {moment(this.testDate).format("DD.MM.YYYY")}</span>
+          <ResourcePlanningList items={this.state.items} getListData={this._getListdata} getProjectDataForThisWeek={this._getProjectDataForThisWeek} selectedUnitToDisplayTime={this.props.selectedUnitToDisplayTime} />
         </div>
+        <Panel isOpen={this.state.showProjectDetails}
+          onDismiss={() => this._setShowPanel(false)}
+          type={PanelType.medium}
+          headerText='Project Details'>
+          <h3>Project Members</h3>
+          <List items={this.state.projectDetails} onRenderCell={this._onProjectDetailsRenderCell} />
+        </Panel>
       </div>
     );
   }
 
+  @autobind
+  private _getSimpleWeekFormat(date: string) {
+    let numberOfDays = moment(this.testDate).startOf('isoWeek').diff(moment().startOf('isoWeek'), "days");
+
+    if (numberOfDays == 7) {
+      return "next Week";
+    } else if (numberOfDays == -7) {
+      return "last Week";
+    } else if (numberOfDays == 0) {
+      return "this Week";
+    } else if (numberOfDays > 0) {
+      return "In " + Math.abs(numberOfDays / 7) + " Weeks";
+    } else {
+      return Math.abs(numberOfDays / 7) + " Weeks ago";
+    }
+  }
+
+  @autobind
+  private _onProjectDetailsRenderCell(item: IListEntry, index: number | undefined): JSX.Element {
+    return (
+      <div>
+        <span>{item.Title}</span>
+      </div>)
+  }
+
+  @autobind
+  private _setShowPanel(show: boolean): void {
+    this.setState({ showProjectDetails: show });
+  }
+
   componentWillReceiveProps(nextProps: IWeeklyResourcePlanningProps) {
-    if (this.props.showAmountOfTimeInHours !== nextProps.showAmountOfTimeInHours) {
+    if (this.props.selectedUnitToDisplayTime !== nextProps.selectedUnitToDisplayTime) {
       this._getListdata();
     }
   }
 
   @autobind
   private _getListdata() {
-    let listManager: ListManager = new ListManager(this.props.context);
-    listManager.getListDataForUser("kbo0382").then((response) => {
-      this._renderList(response.value);
-    });
+    this.props.listDataProvider.getAll().then((response) => {
+      this._renderList(response);
+    })
   }
 
   @autobind
-  private _renderList(items: ISPList[]): void {
+  private _getProjectDataForThisWeek(project: string, week: Date) {
+    this.props.listDataProvider.getAllProjectMembersForThisWeek(project, week).then((response) => {
+      this._showProjectDetails(response);
+    })
+  }
+
+  @autobind
+  private _showProjectDetails(items: IListEntry[]) {
+    this.setState({ projectDetails: items });
+    this._setShowPanel(true);
+  }
+
+  @autobind
+  private _renderList(items: IListEntry[]): void {
     let newItems: Array<any> = [];
-    items.forEach((item: ISPList) => {
+    items.forEach((item: IListEntry) => {
       if (item.Title == this.TESTUSER && this._isDateCurrentMonday(moment(item.WochenDatum).format(this.MOMENTFORMAT))) {
         newItems.push(item);
       }
