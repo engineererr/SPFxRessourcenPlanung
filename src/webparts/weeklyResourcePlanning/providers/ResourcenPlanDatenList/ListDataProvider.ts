@@ -3,7 +3,7 @@ import IListDataProvider from './IListDataProvider';
 import { ListManager } from '../../utils/ListManager';
 
 export class ListDataProvider implements IListDataProvider {
-  listManager: ListManager;
+  private listManager: ListManager;
   constructor(context: any) {
     this.listManager = new ListManager(context);
   }

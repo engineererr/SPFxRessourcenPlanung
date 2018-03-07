@@ -10,7 +10,7 @@ import { ISPResponse } from "../providers/ResourcenPlanDatenList/ISPResponse";
 import IListEntry from "../providers/ResourcenPlanDatenList/IListEntry";
 
 export class ListManager {
-  context: any;
+  private context: any;
 
   constructor(context) {
     this.context = context;

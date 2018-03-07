@@ -11,25 +11,22 @@ import { autobind, List, ProgressIndicator, Icon, IconButton, Link } from 'offic
 import * as strings from 'WeeklyResourcePlanningWebPartStrings';
 import IListEntry from '../providers/ResourcenPlanDatenList/IListEntry';
 
+import { getFormattedProgressIndicatorLabel } from '../utils/helpers';
+
 export interface IResourcePlanningListProps {
   items: Array<IListEntry>;
   getListData: any;
-
   getProjectDataForThisWeek: any;
   selectedUnitToDisplayTime: string;
-
 }
 
 export default class ResourcePlaningList extends React.Component<IResourcePlanningListProps> {
 
-  readonly MOMENTFORMAT: string = "MM/DD/YYYY";
+  private readonly MOMENTFORMAT: string = "MM/DD/YYYY";
 
-  testDate: string = moment("01/29/2018").format(this.MOMENTFORMAT);
-  constructor(props: any, state: IWeeklyResourcePlanningState) {
+  private testDate: string = moment("01/29/2018").format(this.MOMENTFORMAT);
+  constructor(props: IResourcePlanningListProps, state: IWeeklyResourcePlanningState) {
     super(props);
-    this.state = {
-      items: [],
-    };
     this.props.getListData();
   }
 
@@ -41,10 +38,10 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
         ) : (
             <h3>{strings.NoDataForThisWeek}</h3>
           )}
-      </div>)
+      </div>);
   }
 
-  componentWillReceiveProps(nextProps: IResourcePlanningListProps) {
+  public componentWillReceiveProps(nextProps: IResourcePlanningListProps) {
     if (this.props.selectedUnitToDisplayTime !== nextProps.selectedUnitToDisplayTime) {
       this.props.getListData();
     }
@@ -66,26 +63,8 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
           }
           <Link onClick={() => this.props.getProjectDataForThisWeek(item.ProjektCode, item.WochenDatum)}>more...</Link>
         </span>
-        <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1) ? styles.overbookedProcessIndicator : ""} percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={this._getFormattedProgressIndicatorLabel(item.IstMinuten, item.PlanMinuten)} />
+        <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1) ? styles.overbookedProcessIndicator : ""} percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={getFormattedProgressIndicatorLabel(this.props.selectedUnitToDisplayTime, item.IstMinuten, item.PlanMinuten)} />
       </div>
     );
-  }
-
-
-  @autobind
-  private _getFormattedProgressIndicatorLabel(istMinuten: number, planMinuten: number): string {
-    switch (this.props.selectedUnitToDisplayTime) {
-      case "days":
-        let istMinutenInDays = Math.round(istMinuten / 60 / 8 * 100) / 100;
-        let planMinutenInDays = Math.round(planMinuten / 60 / 8 * 100) / 100;
-        return strings.ProgressIndicatorLabelInDays.replace("{ISTMINUTEN}", istMinutenInDays.toString()).replace("{PLANMINUTEN}", planMinutenInDays.toString())
-      case "hours":
-        let istMinutenInHours = Math.round(istMinuten / 60 * 100) / 100;
-        let planMinutenInHours = Math.round(planMinuten / 60 * 100) / 100;
-        return strings.ProgressIndicatorLabelInHours.replace("{ISTMINUTEN}", istMinutenInHours.toString()).replace("{PLANMINUTEN}", planMinutenInHours.toString())
-      default:
-        return strings.ProgressIndicatorLabel.replace("{ISTMINUTEN}", istMinuten.toString()).replace("{PLANMINUTEN}", planMinuten.toString())
-    }
-
   }
 }

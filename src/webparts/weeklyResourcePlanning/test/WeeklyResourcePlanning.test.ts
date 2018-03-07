@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { expect, assert } from 'chai';
 
-import { mount, ReactWrapper } from 'enzyme'
+import { mount, ReactWrapper } from 'enzyme';
 
 import WeeklyResourcePlanning from '../components/WeeklyResourcePlanning';
 import { IWeeklyResourcePlanningProps } from '../components/IWeeklyResourcePlanningProps';
@@ -28,7 +28,7 @@ describe('Testing Resource Planning Component', () => {
     const element = list.find(cssSelector);
 
     assert(element.length > 0);
-  })
+  });
 });
 
 

@@ -17,7 +17,7 @@ export class ListDataFakeProvider implements IListDataProvider {
     });
   }
 
-  getAllProjectMembersForThisWeek(projectCode, week) {
+  public getAllProjectMembersForThisWeek(projectCode, week) {
     return new Promise<Array<IListEntry>>((resolve, reject) => { });
   }
 }
