@@ -24,7 +24,6 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
 
   private readonly MOMENTFORMAT: string = "MM/DD/YYYY";
 
-  private testDate: string = moment("01/29/2018").format(this.MOMENTFORMAT);
   constructor(props: IResourcePlanningListProps, state: IWeeklyResourcePlanningState) {
     super(props);
     this.props.getListData();
@@ -51,7 +50,7 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
   private _onRenderCell(item: IListEntry, index: number | undefined): JSX.Element {
     return (
       <div>
-        <h3 className={styles.customH3}>{item.ProjektCode}</h3>
+        <h3 className={styles.customH3}>{item.Title}</h3>
         <span>
           {item.ProjectSpaceRelativeUrl !== null && item.ProjectSpaceRelativeUrl !== undefined ?
             (<Link className={styles.titleLinks} target="_blank" href={item.ProjectSpaceRelativeUrl.Url}>{item.ProjectSpaceRelativeUrl.Description}</Link>
@@ -61,7 +60,7 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
             (<Link className={styles.titleLinks} target="_blank" href={item.JiraAbsoluteUrl.Url}>{item.JiraAbsoluteUrl.Description}</Link>
             ) : ("")
           }
-          <Link  onClick={() => this.props.getProjectDataForThisWeek(item.ProjektCode, item.WochenDatum)}>more...</Link>
+          <Link onClick={() => this.props.getProjectDataForThisWeek(item.Title, item.WochenDatum)}>more...</Link>
         </span>
         <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1) ? styles.overbookedProcessIndicator : ""} percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={getFormattedProgressIndicatorLabel(this.props.selectedUnitToDisplayTime, item.IstMinuten, item.PlanMinuten)} />
       </div>

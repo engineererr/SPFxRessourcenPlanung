@@ -15,8 +15,7 @@ import WeekProcessIndicator from './WeekProcessIndicator';
 
 export default class WeeklyResourcePlanning extends React.Component<IWeeklyResourcePlanningProps, IWeeklyResourcePlanningState> {
   private readonly MOMENTFORMAT: string = "MM/DD/YYYY";
-  private readonly TESTUSER: string = "cis0344";
-  private testDate: string = moment("01/22/2018").format(this.MOMENTFORMAT);
+  private currentDate: string = moment(moment.now()).startOf('isoWeek').format(this.MOMENTFORMAT);
   constructor(props: IWeeklyResourcePlanningProps, state: IWeeklyResourcePlanningState) {
     super(props);
     this.state = {
@@ -38,8 +37,8 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
               <span><IconButton title={strings.NextWeekLabel} onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
             </div>
           </div>
-          <h1 className={styles.customH1}>{this._getSimpleWeekFormat(this.testDate)}</h1>
-          <span>{strings.TitleLabel} {moment(this.testDate).format("DD.MM.YYYY")}</span>
+          <h1 className={styles.customH1}>{this._getSimpleWeekFormat(this.currentDate)}</h1>
+          <span>{strings.TitleLabel} {moment(this.currentDate).format("DD.MM.YYYY")}</span>
           <br />
           <h3 className={styles.customH3}>Weekly Total</h3>
           <WeekProcessIndicator items={this.state.items} selectedUnitToDisplayTime={this.props.selectedUnitToDisplayTime} />
@@ -63,13 +62,13 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
   private _onProjectDetailsRenderCell(item: IListEntry, index: number | undefined): JSX.Element {
     return (
       <div>
-        <span>{item.Title}</span>
+        <span>{item.User.EMail}</span>
       </div>);
   }
 
   @autobind
   private _getSimpleWeekFormat(date: string) {
-    let numberOfDays = moment(this.testDate).startOf('isoWeek').diff(moment().startOf('isoWeek'), "days");
+    let numberOfDays = moment(this.currentDate).startOf('isoWeek').diff(moment().startOf('isoWeek'), "days");
 
     if (numberOfDays == 7) {
       return "Next Week";
@@ -117,9 +116,11 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
 
   @autobind
   private _renderList(items: IListEntry[]): void {
+    if (items === undefined) return;
+
     let newItems: Array<any> = [];
     items.forEach((item: IListEntry) => {
-      if (item.Title == this.TESTUSER && this._isDateCurrentMonday(moment(item.WochenDatum).format(this.MOMENTFORMAT))) {
+      if (this._isDateCurrentMonday(moment(item.WochenDatum).format(this.MOMENTFORMAT))) {
         newItems.push(item);
       }
     });
@@ -128,12 +129,13 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
   }
 
   private _isDateCurrentMonday(wochenDatum: string): boolean {
-    return wochenDatum == moment(this.testDate).startOf('isoWeek').format(this.MOMENTFORMAT);
+    let isDateCurrentMonday = (wochenDatum == moment(this.currentDate).startOf('isoWeek').format(this.MOMENTFORMAT)) ? true : false;
+    return isDateCurrentMonday;
   }
 
   @autobind
   private _getNewTestDate(numberOfAdditionalDays: number) {
-    this.testDate = moment(this.testDate).add(numberOfAdditionalDays, 'day').format(this.MOMENTFORMAT);
+    this.currentDate = moment(this.currentDate).add(numberOfAdditionalDays, 'day').format(this.MOMENTFORMAT);
   }
 
   @autobind

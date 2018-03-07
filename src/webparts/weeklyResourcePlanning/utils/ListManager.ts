@@ -12,26 +12,27 @@ import IListEntry from "../providers/ResourcenPlanDatenList/IListEntry";
 export class ListManager {
   private context: any;
 
+  private readonly BASEURL = "https://garaioag874.sharepoint.com/sites/SPFxShowcase";
   constructor(context) {
     this.context = context;
   }
 
   public getListData(): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch('https://cloudfighters.sharepoint.com/sites/PizzaMeeting' + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
   }
 
   public getListDataForUser(user: string): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch('https://cloudfighters.sharepoint.com/sites/PizzaMeeting' + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$filter=Title eq '${user}'`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=Title,PlanMinuten,IstMinuten,ProjectSpaceRelativeUrl,JiraAbsoluteUrl,WochenDatum,User/EMail&$expand=User&$filter=User/EMail eq '${user}'`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
   }
 
   public getListDataForProjectAndThisWeek(projectCode: string, week: Date): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch(`https://cloudfighters.sharepoint.com/sites/PizzaMeeting/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$filter=(WochenDatum eq '${week.toString()}' and ProjektCode eq '${projectCode}')`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=User/EMail&$expand=User&$filter=(WochenDatum eq '${week.toString()}' and Title eq '${projectCode}')`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });

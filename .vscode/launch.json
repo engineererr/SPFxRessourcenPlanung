@@ -25,7 +25,7 @@
       "name": "Hosted workbench",
       "type": "chrome",
       "request": "launch",
-      "url": "https://cloudfighters.sharepoint.com/sites/pizzameeting/_layouts/workbench.aspx",
+      "url": "https://garaioag874.sharepoint.com/sites/SPFxShowcase/_layouts/workbench.aspx",
       "webRoot": "${workspaceRoot}",
       "sourceMaps": true,
       "sourceMapPathOverrides": {

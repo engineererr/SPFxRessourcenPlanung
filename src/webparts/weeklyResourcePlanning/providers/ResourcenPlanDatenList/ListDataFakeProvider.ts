@@ -8,7 +8,7 @@ export class ListDataFakeProvider implements IListDataProvider {
     return new Promise<Array<IListEntry>>((resolve, reject) => {
 
       let list = [
-        { Title: "Affe", Id: "sdf", IstMinuten: 100, PlanMinuten: 30, ProjektCode: "col-bla", WochenDatum: new Date("03/03/2018") },
+        { Title: "col-bla", Id: "sdf", IstMinuten: 100, PlanMinuten: 30, WochenDatum: new Date("03/03/2018") },
 
       ] as Array<IListEntry>;
 

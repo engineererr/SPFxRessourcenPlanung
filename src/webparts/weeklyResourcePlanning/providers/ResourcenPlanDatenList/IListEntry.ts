@@ -1,7 +1,9 @@
+import SPUser from "@microsoft/sp-page-context/lib/SPUser";
+
 export default interface IListEntry {
   Id: string;
+  User: { EMail: string };
   Title: string;
-  ProjektCode: string;
   PlanMinuten: number;
   IstMinuten: number;
   WochenDatum: Date;

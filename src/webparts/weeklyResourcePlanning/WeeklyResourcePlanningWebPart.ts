@@ -27,6 +27,7 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
       {
         selectedUnitToDisplayTime: this.properties.selectedUnitToDisplayTime,
         listDataProvider: new ListDataProvider(this.context),
+        currentUser: this.context.pageContext.user,
       }
     );
 
