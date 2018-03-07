@@ -50,6 +50,7 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
           type={PanelType.smallFixedNear}
           headerText='Project Details'
           isBlocking={false}
+          isLightDismiss={true}
         >
           <h3>Project Members</h3>
           <List items={this.state.projectDetails} onRenderCell={this._onProjectDetailsRenderCell} />

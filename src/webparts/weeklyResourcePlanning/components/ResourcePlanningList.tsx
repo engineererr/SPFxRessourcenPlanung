@@ -61,7 +61,7 @@ export default class ResourcePlaningList extends React.Component<IResourcePlanni
             (<Link className={styles.titleLinks} target="_blank" href={item.JiraAbsoluteUrl.Url}>{item.JiraAbsoluteUrl.Description}</Link>
             ) : ("")
           }
-          <Link onClick={() => this.props.getProjectDataForThisWeek(item.ProjektCode, item.WochenDatum)}>more...</Link>
+          <Link  onClick={() => this.props.getProjectDataForThisWeek(item.ProjektCode, item.WochenDatum)}>more...</Link>
         </span>
         <ProgressIndicator className={(1 / item.PlanMinuten * item.IstMinuten > 1) ? styles.overbookedProcessIndicator : ""} percentComplete={1 / item.PlanMinuten * item.IstMinuten} description={getFormattedProgressIndicatorLabel(this.props.selectedUnitToDisplayTime, item.IstMinuten, item.PlanMinuten)} />
       </div>
