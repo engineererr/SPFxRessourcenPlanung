@@ -11,28 +11,33 @@ import IListEntry from "../providers/ResourcenPlanDatenList/IListEntry";
 
 export class ListManager {
   private context: any;
+  private readonly BASEURL;
+  private readonly LISTURL;
 
-  private readonly BASEURL = "https://garaioag874.sharepoint.com/sites/SPFxShowcase";
-  constructor(context) {
+  constructor(context, baseUrl, listUrl) {
     this.context = context;
+    this.BASEURL = baseUrl;
+    this.LISTURL = listUrl;
   }
 
-  public getListData(): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items`, SPHttpClient.configurations.v1)
-      .then((response: SPHttpClientResponse) => {
-        return response.json();
-      });
-  }
-
+  //gets all list entries of provided user e-mail address
   public getListDataForUser(user: string): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=Title,PlanMinuten,IstMinuten,ProjectSpaceRelativeUrl,JiraAbsoluteUrl,WochenDatum,User/EMail&$expand=User&$filter=User/EMail eq '${user}'`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('${this.LISTURL}')/items?$select=Title,PlanMinuten,IstMinuten,ProjectSpaceRelativeUrl,JiraAbsoluteUrl,WochenDatum,User/EMail&$expand=User&$filter=User/EMail eq '${user}'`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
   }
 
   public getListDataForProjectAndThisWeek(projectCode: string, week: Date): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=User/EMail,User/Title&$expand=User&$filter=(WochenDatum eq '${week.toString()}' and Title eq '${projectCode}')`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('${this.LISTURL}')/items?$select=User/EMail,User/Title&$expand=User&$filter=(WochenDatum eq '${week.toString()}' and Title eq '${projectCode}')`, SPHttpClient.configurations.v1)
+      .then((response: SPHttpClientResponse) => {
+        return response.json();
+      });
+  }
+
+
+  public getListData(): Promise<ISPResponse> {
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('${this.LISTURL}')/items`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });

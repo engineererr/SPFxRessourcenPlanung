@@ -22,9 +22,9 @@
       "default": "WeeklyResourcePlanning"
     },
     "description": {
-      "default": "Shows a weekly summary over the planned projects in the Ressourcenplanung"
+      "default": "Shows a weekly summary over the planned projects in the Ressourcenplanung."
     },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "BarChartHorizontal",
     "properties": {
       "description": "Weekly Resource Planning",
       "selectedUnitToDisplayTime": "hours"

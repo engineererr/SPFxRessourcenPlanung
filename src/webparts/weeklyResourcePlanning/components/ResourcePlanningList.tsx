@@ -22,8 +22,6 @@ export interface IResourcePlanningListProps {
 
 export default class ResourcePlaningList extends React.Component<IResourcePlanningListProps> {
 
-  private readonly MOMENTFORMAT: string = "MM/DD/YYYY";
-
   constructor(props: IResourcePlanningListProps, state: IWeeklyResourcePlanningState) {
     super(props);
     this.props.getListData();
