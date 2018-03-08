@@ -8,7 +8,7 @@ import IListEntry from '../providers/ResourcenPlanDatenList/IListEntry';
 
 import { ListManager } from '../utils/ListManager';
 import * as moment from 'moment';
-import { autobind, List, ProgressIndicator, Icon, IconButton, Panel, PanelType } from 'office-ui-fabric-react';
+import { autobind, List, ProgressIndicator, Icon, IconButton, Panel, PanelType, Persona, PersonaSize } from 'office-ui-fabric-react';
 
 import ResourcePlanningList from './ResourcePlanningList';
 import WeekProcessIndicator from './WeekProcessIndicator';
@@ -60,9 +60,10 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
 
   @autobind
   private _onProjectDetailsRenderCell(item: IListEntry, index: number | undefined): JSX.Element {
+    const initials = item.User.EMail.substr(0, 1).toUpperCase() + item.User.EMail.substr(item.User.EMail.indexOf(".") + 1, 1).toUpperCase();
     return (
       <div>
-        <span>{item.User.EMail}</span>
+        <Persona primaryText={item.User.Title} imageInitials={initials} size={PersonaSize.size32} />
       </div>);
   }
 

@@ -32,7 +32,7 @@ export class ListManager {
   }
 
   public getListDataForProjectAndThisWeek(projectCode: string, week: Date): Promise<ISPResponse> {
-    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=User/EMail&$expand=User&$filter=(WochenDatum eq '${week.toString()}' and Title eq '${projectCode}')`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.fetch(this.BASEURL + `/_api/web/lists/GetByTitle('RessourcenPlanDaten')/items?$select=User/EMail,User/Title&$expand=User&$filter=(WochenDatum eq '${week.toString()}' and Title eq '${projectCode}')`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
