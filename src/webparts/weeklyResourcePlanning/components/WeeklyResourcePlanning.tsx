@@ -75,7 +75,7 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
 
   @autobind
   private _getSimpleWeekFormat(date: string) {
-    let simpleWeek = "";
+    let simpleWeek = "KW ";
     let kwNumber = moment(this.currentDate).week();
     simpleWeek += kwNumber;
     simpleWeek += " - ";
@@ -92,6 +92,8 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
     } else {
       simpleWeek += Math.abs(numberOfDays / 7) + " Weeks ago";
     }
+
+    return simpleWeek;
   }
 
   @autobind
