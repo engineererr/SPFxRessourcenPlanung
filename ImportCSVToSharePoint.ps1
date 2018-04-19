@@ -2,38 +2,39 @@
 Connect-PnPOnline -Url "https://garaioag874.sharepoint.com/sites/SPFxShowcase"
 cd D:\AVexcluded\WeeklyResourcePlanning
 
-if ($false) {
-    Remove-PnPList "RessourcenPlanDaten" -Force
-    New-PnPList -Title "RessourcenPlanDaten" -Template GenericList
+Remove-PnPList "RessourcenPlanDaten" -Force
+New-PnPList -Title "RessourcenPlanDaten" -Template GenericList
+$RessourcenPlanDatenList = Get-PnPList -Identity "RessourcenPlanDaten"
+#ProjektCode field not needed. Rename title field to ProjektCode
+#Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjektCode" -InternalName "ProjektCode" -Type Text -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "PlanMinuten" -InternalName "PlanMinuten" -Type Number -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "IstMinuten" -InternalName "IstMinuten" -Type Number -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjectSpaceRelativeUrl" -InternalName "ProjectSpaceRelativeUrl" -Type URL -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "JiraAbsoluteUrl" -InternalName "JiraAbsoluteUrl" -Type URL -AddToDefaultView
+Add-PnPField -List $RessourcenPlanDatenList -DisplayName "User" -InternalName "User" -Type User -AddToDefaultView
+
+Add-PnPFieldFromXml '<Field Type="DateTime"
+    DisplayName="WochenDatum"
+    Required="FALSE"
+    EnforceUniqueValues="FALSE"
+    Indexed="FALSE" Format="DateOnly"
+    Group="Custom Columns"
+    FriendlyDisplayFormat="Disabled"
+    ID="{10ce4fed-921a-4d51-a870-534605bf89be}"
+    SourceID="{6cf53ae4-314b-435e-9685-19b7f7b8df07}"
+    StaticName="WochenDatum"
+    Name="WochenDatum">
+</Field>' -List $RessourcenPlanDatenList
+#add DateTime field to default view (not possible per PS yet)
+
+$recreateProjectInformationList = $false
+if ($recreateProjectInformationList) {
     New-PnPList -Title "ProjectInformation" -Template GenericList
 
-    $RessourcenPlanDatenList = Get-PnPList -Identity "RessourcenPlanDaten"
     $projectInformationList = Get-PnPList -Identity "ProjectInformation"
 
     Add-PnPField -List $projectInformationList -DisplayName "ProjectSpaceRelativeUrl" -InternalName "ProjectSpaceRelativeUrl" -Type URL -AddToDefaultView
     Add-PnPField -List $projectInformationList -DisplayName "JiraAbsoluteUrl" -InternalName "JiraAbsoluteUrl" -Type URL -AddToDefaultView
-
-    #ProjektCode field not needed. Rename title field to ProjektCode
-    #Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjektCode" -InternalName "ProjektCode" -Type Text -AddToDefaultView
-    Add-PnPField -List $RessourcenPlanDatenList -DisplayName "PlanMinuten" -InternalName "PlanMinuten" -Type Number -AddToDefaultView
-    Add-PnPField -List $RessourcenPlanDatenList -DisplayName "IstMinuten" -InternalName "IstMinuten" -Type Number -AddToDefaultView
-    Add-PnPField -List $RessourcenPlanDatenList -DisplayName "ProjectSpaceRelativeUrl" -InternalName "ProjectSpaceRelativeUrl" -Type URL -AddToDefaultView
-    Add-PnPField -List $RessourcenPlanDatenList -DisplayName "JiraAbsoluteUrl" -InternalName "JiraAbsoluteUrl" -Type URL -AddToDefaultView
-    Add-PnPField -List $RessourcenPlanDatenList -DisplayName "User" -InternalName "User" -Type User -AddToDefaultView
-
-    Add-PnPFieldFromXml '<Field Type="DateTime"
-				DisplayName="WochenDatum"
-				Required="FALSE"
-				EnforceUniqueValues="FALSE"
-				Indexed="FALSE" Format="DateOnly"
-				Group="Custom Columns"
-				FriendlyDisplayFormat="Disabled"
-				ID="{10ce4fed-921a-4d51-a870-534605bf89be}"
-				SourceID="{6cf53ae4-314b-435e-9685-19b7f7b8df07}"
-				StaticName="WochenDatum"
-				Name="WochenDatum">
-    </Field>' -List $RessourcenPlanDatenList
-    #add DateTime field to default view (not possible per PS yet)
 }
 else {
     $RessourcenPlanDatenList = Get-PnPList -Identity "RessourcenPlanDaten"
@@ -55,7 +56,8 @@ $projectInformationListItems | % {
 $newProjects = $import | select ProjektCode -Unique
 if ($existingProjects -ne $null) {
     $projectsToAdd = Compare-Object -Property ProjektCode -ReferenceObject $existingProjects -DifferenceObject $newProjects | ? {$_.SideIndicator -eq "=>"} | select ProjektCode
-}else {
+}
+else {
     $projectsToAdd = $newProjects
 }
 
@@ -95,5 +97,6 @@ $import | % {
         "JiraAbsoluteUrl"         = $jiraAbsoluteUrl;
         "User"                    = $user;
     }
-    Add-PnPListItem -List $RessourcenPlanDatenList -Values $values -ContentType Element
+    $item = Add-PnPListItem -List $RessourcenPlanDatenList -Values $values -ContentType Element
+    Write-Host "added " $values
 }

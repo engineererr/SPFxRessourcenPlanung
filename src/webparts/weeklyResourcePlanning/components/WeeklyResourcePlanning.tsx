@@ -31,10 +31,12 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.previousWeekArrow}>
-              <span><IconButton title={strings.PreviousWeekLabel} onClick={this._onClickPreviousWeek} iconProps={{ iconName: 'ChromeBack' }} /></span>
+              <span><IconButton title={strings.PreviousWeekLabel}
+                onClick={this._onClickPreviousWeek} iconProps={{ iconName: 'ChromeBack' }} /></span>
             </div>
             <div className={styles.nextWeekArrow}>
-              <span><IconButton title={strings.NextWeekLabel} onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
+              <span><IconButton title={strings.NextWeekLabel}
+                onClick={this._onClickNextWeek} iconProps={{ iconName: 'ChromeBackMirrored' }} /></span>
             </div>
           </div>
           <h1 className={styles.customH1}>{this._getSimpleWeekFormat(this.currentDate)}</h1>
@@ -42,7 +44,11 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
           <br />
           <h3 className={styles.customH3}>Weekly Total</h3>
           <WeekProcessIndicator items={this.state.items} selectedUnitToDisplayTime={this.props.selectedUnitToDisplayTime} />
-          <ResourcePlanningList items={this.state.items} getListData={this._getListdata} getProjectDataForThisWeek={this._getProjectDataForThisWeek} selectedUnitToDisplayTime={this.props.selectedUnitToDisplayTime} />
+          <ResourcePlanningList
+            items={this.state.items}
+            getListData={this._getListdata}
+            getProjectDataForThisWeek={this._getProjectDataForThisWeek}
+            selectedUnitToDisplayTime={this.props.selectedUnitToDisplayTime} />
         </div>
         <Panel isOpen={this.state.showProjectDetails}
           onDismiss={() => this._setShowPanel(false)}
@@ -69,18 +75,22 @@ export default class WeeklyResourcePlanning extends React.Component<IWeeklyResou
 
   @autobind
   private _getSimpleWeekFormat(date: string) {
+    let simpleWeek = "";
+    let kwNumber = moment(this.currentDate).week();
+    simpleWeek += kwNumber;
+    simpleWeek += " - ";
     let numberOfDays = moment(this.currentDate).startOf('isoWeek').diff(moment().startOf('isoWeek'), "days");
 
     if (numberOfDays == 7) {
-      return "Next Week";
+      simpleWeek += "Next Week";
     } else if (numberOfDays == -7) {
-      return "Last Week";
+      simpleWeek += "Last Week";
     } else if (numberOfDays == 0) {
-      return "This Week";
+      simpleWeek += "This Week";
     } else if (numberOfDays > 0) {
-      return "In " + Math.abs(numberOfDays / 7) + " Weeks";
+      simpleWeek += "In " + Math.abs(numberOfDays / 7) + " Weeks";
     } else {
-      return Math.abs(numberOfDays / 7) + " Weeks ago";
+      simpleWeek += Math.abs(numberOfDays / 7) + " Weeks ago";
     }
   }
 
