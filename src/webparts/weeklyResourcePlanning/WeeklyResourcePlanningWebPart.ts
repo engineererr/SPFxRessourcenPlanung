@@ -1,18 +1,20 @@
-import * as React from 'react';
-import * as ReactDom from 'react-dom';
-import { Version } from '@microsoft/sp-core-library';
+import * as React from "react";
+import * as ReactDom from "react-dom";
+import { Version, Environment, EnvironmentType } from "@microsoft/sp-core-library";
 import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
   PropertyPaneTextField,
   PropertyPaneDropdown,
   PropertyPaneToggle,
-} from '@microsoft/sp-webpart-base';
+} from "@microsoft/sp-webpart-base";
 
-import * as strings from 'WeeklyResourcePlanningWebPartStrings';
-import WeeklyResourcePlanning from './components/WeeklyResourcePlanning';
-import { IWeeklyResourcePlanningProps } from './components/IWeeklyResourcePlanningProps';
-import { ListDataProvider } from './providers/ResourcenPlanDatenList/ListDataProvider';
+import * as strings from "WeeklyResourcePlanningWebPartStrings";
+import WeeklyResourcePlanning from "./components/WeeklyResourcePlanning";
+import { IWeeklyResourcePlanningProps } from "./components/IWeeklyResourcePlanningProps";
+import { ListDataProvider } from "./providers/ResourcenPlanDatenList/ListDataProvider";
+import { ListDataFakeProvider } from "./providers/ResourcenPlanDatenList/ListDataFakeProvider";
+import IListDataProvider from "./providers/ResourcenPlanDatenList/IListDataProvider";
 
 
 export interface IWeeklyResourcePlanningWebPartProps {
@@ -20,13 +22,27 @@ export interface IWeeklyResourcePlanningWebPartProps {
 }
 
 export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart<IWeeklyResourcePlanningWebPartProps> {
+  _dataProvider: IListDataProvider;
+  protected onInit(): Promise<void> {
+    if (Environment.type === EnvironmentType.ClassicSharePoint) {
+      // do some stuff on classic page
+    } else if (Environment.type === EnvironmentType.SharePoint) {
+      // do some stuff on modern page
+      this._dataProvider = new ListDataProvider(this.context);
+    } else if (Environment.type === EnvironmentType.Local) {
+      // do some stuff on SharePoint workbench page
+      this._dataProvider = new ListDataFakeProvider();
+    }
+
+    return super.onInit();
+  }
 
   public render(): void {
     const element: React.ReactElement<IWeeklyResourcePlanningProps> = React.createElement(
       WeeklyResourcePlanning,
       {
         selectedUnitToDisplayTime: this.properties.selectedUnitToDisplayTime,
-        listDataProvider: new ListDataProvider(this.context),
+        listDataProvider: this._dataProvider,
         currentUser: this.context.pageContext.user,
       }
     );
@@ -35,7 +51,7 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
   }
 
   protected get dataVersion(): Version {
-    return Version.parse('1.0');
+    return Version.parse("1.0");
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -46,12 +62,12 @@ export default class WeeklyResourcePlanningWebPart extends BaseClientSideWebPart
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneDropdown('selectedUnitToDisplayTime', {
+                PropertyPaneDropdown("selectedUnitToDisplayTime", {
                   label: strings.selectedUnitToDisplayTimeFieldLabel,
                   options: [
-                    { key: 'minutes', text: strings.showAmountOfTimeInMinutesChoiceLabel },
-                    { key: 'hours', text: strings.showAmountOfTimeInHoursChoiceLabel },
-                    { key: 'days', text: strings.showAmountOfTimeInDaysChoiceLabel },
+                    { key: "minutes", text: strings.showAmountOfTimeInMinutesChoiceLabel },
+                    { key: "hours", text: strings.showAmountOfTimeInHoursChoiceLabel },
+                    { key: "days", text: strings.showAmountOfTimeInDaysChoiceLabel },
                   ]
                 }),
               ]
